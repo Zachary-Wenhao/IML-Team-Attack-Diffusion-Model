@@ -89,8 +89,10 @@ class SDE_Adv_Model(nn.Module):
         out = self.classifier((x_re + 1) * 0.5)
 
         self.counter += 1
-
-        return out
+        print("---------------------")
+        print("Shape of x_re: {}".format(x_re.shape))
+        print("------------------")
+        return x_re
 
 
 def eval_autoattack(args, config, model, x_val, y_val, adv_batch_size, log_dir):
@@ -229,15 +231,25 @@ def robustness_eval(args, config):
     model = model.eval().to(config.device)
 
     # load data
+    adv_batch_size = 10
     x_val, y_val = load_data(args, adv_batch_size)
 
+    print("Shape of x_val: {}".format(x_val.shape))
+    print("Shape of y_val: {}".format(y_val.shape))
+
+    x_re = model(x_val)
+    with open('x_val.pkl', 'wb') as f:
+      pickle.dump(x_val, f)
+    with open('x_re.pkl', 'wb') as f:
+      pickle.dump(x_re, f)
+    
     # eval classifier and sde_adv against attacks
-    if args.attack_version in ['standard', 'rand', 'custom']:
-        eval_autoattack(args, config, model, x_val, y_val, adv_batch_size, log_dir)
-    elif args.attack_version == 'stadv':
-        eval_stadv(args, config, model, x_val, y_val, adv_batch_size, log_dir)
-    else:
-        raise NotImplementedError(f'unknown attack_version: {args.attack_version}')
+    # if args.attack_version in ['standard', 'rand', 'custom']:
+    #     eval_autoattack(args, config, model, x_val, y_val, adv_batch_size, log_dir)
+    # elif args.attack_version == 'stadv':
+    #     eval_stadv(args, config, model, x_val, y_val, adv_batch_size, log_dir)
+    # else:
+    #     raise NotImplementedError(f'unknown attack_version: {args.attack_version}')
 
     logger.close()
 
