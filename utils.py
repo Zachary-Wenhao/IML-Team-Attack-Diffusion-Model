@@ -17,6 +17,7 @@ import torchvision.transforms as transforms
 
 from robustbench import load_model
 import data
+import pickle
 
 
 def compute_n_params(model, return_str=True):
@@ -255,11 +256,11 @@ def get_image_classifier(classifier_name):
 
 def load_data(args, adv_batch_size):
     if 'imagenet' in args.domain:
-        val_dir = './dataset/imagenet_lmdb/val'  # using imagenet lmdb data
-        val_transform = data.get_transform(args.domain, 'imval', base_size=224)
-        val_data = data.imagenet_lmdb_dataset_sub(val_dir, transform=val_transform,
-                                                  num_sub=args.num_sub, data_seed=args.data_seed)
-        n_samples = len(val_data)
+        val_dir = './dataset/val_attack_dataset.pkl'
+        with open(val_dir, 'rb') as f:
+          val_data = pickle.load(f)
+        # HERE IS HOW WE CHANGE BATCH SIZE
+        n_samples = 1
         val_loader = DataLoader(val_data, batch_size=n_samples, shuffle=False, pin_memory=True, num_workers=4)
         x_val, y_val = next(iter(val_loader))
     elif 'cifar10' in args.domain:
