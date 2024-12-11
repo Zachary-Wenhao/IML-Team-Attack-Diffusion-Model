@@ -233,24 +233,31 @@ def robustness_eval(args, config):
 
     # load data
     adv_batch_size = 10
-    x_val, y_val = load_data(args, adv_batch_size)
-
-    print("Shape of x_val: {}".format(x_val.shape))
-    print("Shape of y_val: {}".format(y_val.shape))
-
-    x_re = model(x_val)
-    with open('x_val.pkl', 'wb') as f:
-      pickle.dump(x_val, f)
-    with open('x_re.pkl', 'wb') as f:
-      pickle.dump(x_re, f)
+    NUM_ITERATION = 30
+    for iteration in range(1, NUM_ITERATION + 1):  # 20 iterations
+        print(f"Running iteration {iteration}...")
     
-    # eval classifier and sde_adv against attacks
-    # if args.attack_version in ['standard', 'rand', 'custom']:
-    #     eval_autoattack(args, config, model, x_val, y_val, adv_batch_size, log_dir)
-    # elif args.attack_version == 'stadv':
-    #     eval_stadv(args, config, model, x_val, y_val, adv_batch_size, log_dir)
-    # else:
-    #     raise NotImplementedError(f'unknown attack_version: {args.attack_version}')
+        # Load the data
+        x_val, y_val = load_data(args, adv_batch_size)
+        print("Shape of x_val: {}".format(x_val.shape))
+        print("Shape of y_val: {}".format(y_val.shape))
+    
+        # Run the model
+        x_re = model(x_val)
+
+        # Define output directories
+        base_output_dir = '/content/IML-Team-Attack-Diffusion-Model/outputs'
+        os.makedirs(base_output_dir, exist_ok=True)
+        
+        # Save the files
+        with open(os.path.join(base_output_dir, f'/x_val/iter_{iteration}.pkl'), 'wb') as f:
+            pickle.dump(x_val.cpu(), f)
+        with open(os.path.join(base_output_dir, f'/y_val/iter_{iteration}.pkl'), 'wb') as f:
+            pickle.dump(y_val.cpu(), f)
+        with open(os.path.join(base_output_dir, f'/x_re/iter_{iteration}.pkl'), 'wb') as f:
+            pickle.dump(x_re.cpu(), f)
+        
+        print("Files saved successfully in the outputs directory.")
 
     logger.close()
 
