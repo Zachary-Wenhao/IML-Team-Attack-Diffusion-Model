@@ -234,7 +234,7 @@ def robustness_eval(args, config):
     # load data
     adv_batch_size = 10
     NUM_ITERATION = 30
-    for iteration in range(1, NUM_ITERATION + 1):  # 20 iterations
+    for iteration in range(1, NUM_ITERATION + 1): 
         print(f"Running iteration {iteration}...")
     
         # Load the data
@@ -246,15 +246,16 @@ def robustness_eval(args, config):
         x_re = model(x_val)
 
         # Define output directories
-        base_output_dir = '/content/IML-Team-Attack-Diffusion-Model/outputs'
+        base_output_dir = '/content/IML-Team-Attack-Diffusion-Model/output/'
         os.makedirs(base_output_dir, exist_ok=True)
         
         # Save the files
-        with open(os.path.join(base_output_dir, f'/x_val/iter_{iteration}.pkl'), 'wb') as f:
+        print("Output storing...")
+        with open(os.path.join(base_output_dir, f'x_val/iter_{iteration}.pkl'), 'wb') as f:
             pickle.dump(x_val.cpu(), f)
-        with open(os.path.join(base_output_dir, f'/y_val/iter_{iteration}.pkl'), 'wb') as f:
+        with open(os.path.join(base_output_dir, f'y_val/iter_{iteration}.pkl'), 'wb') as f:
             pickle.dump(y_val.cpu(), f)
-        with open(os.path.join(base_output_dir, f'/x_re/iter_{iteration}.pkl'), 'wb') as f:
+        with open(os.path.join(base_output_dir, f'x_re/iter_{iteration}.pkl'), 'wb') as f:
             pickle.dump(x_re.cpu(), f)
         
         print("Files saved successfully in the outputs directory.")

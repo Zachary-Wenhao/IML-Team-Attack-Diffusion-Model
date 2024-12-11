@@ -12,12 +12,14 @@ from typing import Any
 import torch
 import torch.nn as nn
 import torchvision.models as models
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, TensorDataset
 import torchvision.transforms as transforms
 
 from robustbench import load_model
 import data
 import pickle
+
+
 
 
 def compute_n_params(model, return_str=True):
@@ -256,12 +258,24 @@ def get_image_classifier(classifier_name):
 
 def load_data(args, adv_batch_size):
     if 'imagenet' in args.domain:
-        val_dir = './dataset/val_attack_dataset.pkl'
-        with open(val_dir, 'rb') as f:
-          val_data = pickle.load(f)
-        # HERE IS HOW WE CHANGE BATCH SIZE
-        n_samples = 5
-        val_loader = DataLoader(val_data, batch_size=n_samples, shuffle=True, pin_memory=True, num_workers=4)
+        # Wrap tensors in a TensorDataset
+        val_dir = './dataset/val_dataset2.pt'  # Path to the new dataset file
+        val_data = torch.load(val_dir)  # Load the .pt file
+
+
+        # Move tensors to CPU if CUDA initialization is problematic
+        val_data = TensorDataset(*(tensor.to('cpu') for tensor in val_data.tensors))    
+        
+        # Use the DataLoader to create batches
+        BATCH_SIZE = 5
+        val_loader = DataLoader(val_data, batch_size=BATCH_SIZE, shuffle=True, pin_memory=True, num_workers=4)
+        
+        # val_dir = './dataset/val_attack_dataset.pkl'
+        # with open(val_dir, 'rb') as f:
+        #   val_data = pickle.load(f)
+        # # HERE IS HOW WE CHANGE BATCH SIZE
+        # n_samples = 5
+        # val_loader = DataLoader(val_data, batch_size=n_samples, shuffle=True, pin_memory=True, num_workers=4)
         x_val, y_val = next(iter(val_loader))
     elif 'cifar10' in args.domain:
         data_dir = './dataset'
