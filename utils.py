@@ -260,8 +260,8 @@ def load_data(args, adv_batch_size):
         with open(val_dir, 'rb') as f:
           val_data = pickle.load(f)
         # HERE IS HOW WE CHANGE BATCH SIZE
-        n_samples = 1
-        val_loader = DataLoader(val_data, batch_size=n_samples, shuffle=False, pin_memory=True, num_workers=4)
+        n_samples = 5
+        val_loader = DataLoader(val_data, batch_size=n_samples, shuffle=True, pin_memory=True, num_workers=4)
         x_val, y_val = next(iter(val_loader))
     elif 'cifar10' in args.domain:
         data_dir = './dataset'

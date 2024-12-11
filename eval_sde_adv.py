@@ -30,6 +30,7 @@ from runners.diffpure_sde import RevGuidedDiffusion
 from runners.diffpure_ode import OdeGuidedDiffusion
 from runners.diffpure_ldsde import LDGuidedDiffusion
 
+import pickle
 
 class SDE_Adv_Model(nn.Module):
     def __init__(self, args, config):
@@ -37,7 +38,7 @@ class SDE_Adv_Model(nn.Module):
         self.args = args
 
         # image classifier
-        self.classifier = get_image_classifier(args.classifier_name).to(config.device)
+        # self.classifier = get_image_classifier(args.classifier_name).to(config.device)
 
         # diffusion model
         print(f'diffusion_type: {args.diffusion_type}')
@@ -82,11 +83,11 @@ class SDE_Adv_Model(nn.Module):
             x_re = F.interpolate(x_re, size=(224, 224), mode='bilinear', align_corners=False)
 
         if counter % 5 == 0:
-            print(f'x shape (before diffusion models): {x.shape}')
-            print(f'x shape (before classifier): {x_re.shape}')
+            print(f'x_val shape (before diffusion models): {x.shape}')
+            print(f'x_re shape (before classifier): {x_re.shape}')
             print("Sampling time per batch: {:0>2}:{:05.2f}".format(int(minutes), seconds))
 
-        out = self.classifier((x_re + 1) * 0.5)
+        # out = self.classifier((x_re + 1) * 0.5)
 
         self.counter += 1
         print("---------------------")
