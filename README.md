@@ -4,6 +4,10 @@
 
 We are examining the effectiveness of different attacks on an adversarial purification diffusion model. Our baseline will be the method outlined in Diffusion Models for Adversarial Purification (Nie, et al. 2022). We first fine-tune a pre-trained classifier, then we generate adversarial images by swapping pixels of the target image randomly with another image, until the classifier classifies the target image as another class. We diffuse the adversarial image slightly by adding random noise to it via the forward process and recover the clean image via the generative backward process. We would hope then that the classifier recognizes the correct original class.
 
+## Final Report
+
+Check out our final report here: [Team Report 10701](https://github.com/Zachary-Wenhao/IML-Team-Attack-Diffusion-Model/blob/main/10701_cmu_Final_Project.pdf)
+
 ## Reference Paper
 <p align="center">
   <img width="460" height="300" src="./assets/teaser_v7.jpeg">
